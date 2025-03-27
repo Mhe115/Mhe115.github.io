@@ -8,7 +8,7 @@
 let inputElement = document.getElementById("inputText");
 let text = inputElement ? inputElement.value : ""; // Fallback to empty string if element not found
 
-// Dictionary of word replacements (to simplify formal words)
+// Dictionary of word replacements (for simplifying formal words)
 let wordMap = {
     "utilize": "use",
     "commence": "start",
@@ -50,7 +50,6 @@ let casualPhrases = ["just", "really", "a bit", "kind of", "sort of", "to be hon
 // Converts passive voice to active voice (basic implementation)
 function convertPassiveToActive(text) {
     return text.replace(/\b(was|were|is|are) ([a-z]+) by ([A-Z][a-z]+)\b/gi, "$3 $2"); 
-    // Example: "The report was written by John." → "John wrote the report."
 }
 
 // Function to replace words using a dictionary
@@ -75,7 +74,7 @@ function replaceWithSynonyms(text) {
 
 // Function to break up long sentences (basic simplification)
 function simplifySentences(text) {
-    return text.replace(/, (and|but) /gi, ". ").replace(/;/g, "."); // Converts commas & semicolons into separate sentences
+    return text.replace(/, (and|but) /gi, ". ").replace(/;/g, "."); 
 }
 
 // Function to inject casual words for a natural feel
@@ -93,6 +92,23 @@ function reduceOverFormality(text) {
     return text;
 }
 
+// Function to correct common grammar issues
+function fixGrammar(text) {
+    // Fix misplaced punctuation before conjunctions
+    text = text.replace(/([a-z])\. (However|But|Therefore|And|So)/gi, "$1. $2,");
+    
+    // Ensure proper spacing after punctuation
+    text = text.replace(/([.!?])([A-Z])/g, "$1 $2");
+
+    // Fix missing articles (basic check)
+    text = text.replace(/\b(help|information|advice|knowledge|work) may be required\b/gi, "some $1 may be required");
+
+    // Remove redundant casual words (if there are two together)
+    text = text.replace(/\b(actually|really|just|kind of|sort of)\s+\1\b/gi, "$1");
+
+    return text;
+}
+
 // Apply transformations
 text = replaceWords(text, wordMap);          // Replace formal words
 text = replaceWords(text, contractions);     // Apply contractions
@@ -101,6 +117,7 @@ text = simplifySentences(text);              // Break long sentences
 text = addCasualPhrasing(text);              // Make it sound more natural
 text = reduceOverFormality(text);            // Cut unnecessary formality
 text = convertPassiveToActive(text);         // Fix passive voice
+text = fixGrammar(text);                     // Final grammar check!
 
 // Optional: Log the transformed text (useful for debugging)
 console.log("Humanized text:", text);
