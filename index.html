@@ -1,2 +1,35 @@
 <!DOCTYPE html>
-<body>Hello World</body>
+<html>
+<head>
+    <title>Humanize Text</title>
+    <script>
+        function humanizeText() {
+            let text = document.getElementById("inputText").value;
+            let replacements = {
+                "utilize": "use",
+                "commence": "start",
+                "terminate": "end",
+                "comprehend": "understand",
+                "acquire": "get",
+                "assistance": "help",
+                "demonstrate": "show"
+            };
+            
+            for (let key in replacements) {
+                let regex = new RegExp("\\b" + key + "\\b", "gi");
+                text = text.replace(regex, replacements[key]);
+            }
+            
+            document.getElementById("outputText").innerText = text;
+        }
+    </script>
+</head>
+<body>
+    <h2>Humanize Your Text</h2>
+    <textarea id="inputText" rows="4" cols="50" placeholder="Enter text here..."></textarea>
+    <br>
+    <button onclick="humanizeText()">Humanize</button>
+    <h3>Output:</h3>
+    <p id="outputText"></p>
+</body>
+</html>
