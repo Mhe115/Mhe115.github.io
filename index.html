@@ -4,21 +4,107 @@
     <title>Humanize Text</title>
     <script>
         function humanizeText() {
-            let text = document.getElementById("inputText").value;
-            let replacements = {
-                "utilize": "use",
-                "commence": "start",
-                "terminate": "end",
-                "comprehend": "understand",
-                "acquire": "get",
-                "assistance": "help",
-                "demonstrate": "show"
-            };
-            
-            for (let key in replacements) {
-                let regex = new RegExp("\\b" + key + "\\b", "gi");
-                text = text.replace(regex, replacements[key]);
-            }
+            // Grab the input text from the input field
+let inputElement = document.getElementById("inputText");
+let text = inputElement ? inputElement.value : ""; // Fallback to empty string if element not found
+
+// Dictionary of word replacements (to simplify formal words)
+let wordMap = {
+    "utilize": "use",
+    "commence": "start",
+    "terminate": "end",
+    "comprehend": "understand",
+    "acquire": "get",
+    "assistance": "help",
+    "demonstrate": "show",
+    "in order to": "to"
+};
+
+// Contractions map (to make text conversational)
+let contractions = {
+    "do not": "don't",
+    "does not": "doesn't",
+    "is not": "isn't",
+    "cannot": "can't",
+    "will not": "won't",
+    "would have": "would've",
+    "should have": "should've",
+    "could have": "could've",
+    "it is": "it's",
+    "that is": "that's",
+    "there is": "there's"
+};
+
+// Synonyms for variety (adds randomness for human-like variation)
+let synonymMap = {
+    "happy": ["glad", "joyful", "pleased"],
+    "angry": ["mad", "upset", "annoyed"],
+    "fast": ["quick", "speedy", "rapid"],
+    "slow": ["sluggish", "unhurried", "leisurely"],
+    "important": ["crucial", "key", "big deal"]
+};
+
+// Casual phrases (adds small human-like softeners)
+let casualPhrases = ["just", "really", "a bit", "kind of", "sort of", "to be honest", "actually"];
+
+// Converts passive voice to active voice (basic implementation)
+function convertPassiveToActive(text) {
+    return text.replace(/\b(was|were|is|are) ([a-z]+) by ([A-Z][a-z]+)\b/gi, "$3 $2"); 
+    // Example: "The report was written by John." → "John wrote the report."
+}
+
+// Function to replace words using a dictionary
+function replaceWords(text, dictionary) {
+    Object.keys(dictionary).forEach((key) => {
+        let pattern = new RegExp(`\\b${key}\\b`, "gi");
+        text = text.replace(pattern, dictionary[key]);
+    });
+    return text;
+}
+
+// Function to randomly pick synonyms (if applicable)
+function replaceWithSynonyms(text) {
+    Object.keys(synonymMap).forEach((key) => {
+        let pattern = new RegExp(`\\b${key}\\b`, "gi");
+        let synonyms = synonymMap[key];
+        let randomSynonym = synonyms[Math.floor(Math.random() * synonyms.length)];
+        text = text.replace(pattern, randomSynonym);
+    });
+    return text;
+}
+
+// Function to break up long sentences (basic simplification)
+function simplifySentences(text) {
+    return text.replace(/, (and|but) /gi, ". ").replace(/;/g, "."); // Converts commas & semicolons into separate sentences
+}
+
+// Function to inject casual words for a natural feel
+function addCasualPhrasing(text) {
+    return text.replace(/\b(is|was|are|were|seems)\b/gi, (match) => {
+        return casualPhrases[Math.floor(Math.random() * casualPhrases.length)] + " " + match;
+    });
+}
+
+// Function to make text sound more natural (removes unnecessary formality)
+function reduceOverFormality(text) {
+    text = text.replace(/\b(it is imperative that|it is necessary to)\b/gi, "we really need to");
+    text = text.replace(/\b(it would be beneficial to)\b/gi, "it’d help to");
+    text = text.replace(/\b(at this point in time)\b/gi, "right now");
+    return text;
+}
+
+// Apply transformations
+text = replaceWords(text, wordMap);          // Replace formal words
+text = replaceWords(text, contractions);     // Apply contractions
+text = replaceWithSynonyms(text);            // Randomly swap in synonyms
+text = simplifySentences(text);              // Break long sentences
+text = addCasualPhrasing(text);              // Make it sound more natural
+text = reduceOverFormality(text);            // Cut unnecessary formality
+text = convertPassiveToActive(text);         // Fix passive voice
+
+// Optional: Log the transformed text (useful for debugging)
+console.log("Humanized text:", text);
+
             
             document.getElementById("outputText").innerText = text;
         }
