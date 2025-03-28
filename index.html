@@ -107,7 +107,7 @@ function fixGrammar(text) {
     text = text.replace(/\b(actually|really|just|kind of|sort of)\s+\1\b/gi, "$1");
 
     //use a little api
-    return checkGrammar(text);
+    return text;
 }
 
 async function checkGrammar(text) {
