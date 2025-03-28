@@ -106,7 +106,43 @@ function fixGrammar(text) {
     // Remove redundant casual words (if there are two together)
     text = text.replace(/\b(actually|really|just|kind of|sort of)\s+\1\b/gi, "$1");
 
-    return text;
+    //use a little api
+    return checkGrammar(text);
+}
+
+async function checkGrammar(text) {
+    const apiUrl = "https://api.languagetool.org/v2/check";
+
+    let response = await fetch(apiUrl, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: new URLSearchParams({
+            text: text,
+            language: "en-US"  // Change to "en-GB" for British English
+        })
+    });
+
+    let data = await response.json();
+
+    // If there are no grammar mistakes, return the original text
+    if (!data.matches || data.matches.length === 0) {
+        return text;
+    }
+
+    // Apply corrections to the text
+    let correctedText = text;
+    for (let match of data.matches) {
+        let replacement = match.replacements.length > 0 ? match.replacements[0].value : null;
+        if (replacement) {
+            correctedText = correctedText.substring(0, match.offset) +
+                            replacement +
+                            correctedText.substring(match.offset + match.length);
+        }
+    }
+
+    return correctedText;
 }
 
 // Apply transformations
